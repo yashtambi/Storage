@@ -9,12 +9,12 @@ function [PVoutput, PVarea, PVtotalIrr, PVtotOut] = solarpower(regiondata, t, ..
         %}
         
         if nargin < 5
-            areaperplant = 16*10e6;
+            areaperplant = 16*1e6;
             totplants = 10;
         elseif nargin < 6
             totplants = 10;
         else
-            areaperplant = areaperplant*10e6;       % Convert km2 to m2
+            areaperplant = areaperplant*1e6;       % Convert km2 to m2
         end
         
         PVarea = areaperplant * totplants;  % Total plant area

@@ -14,6 +14,7 @@ solar_filename = 'avg_irradiations.xlsx';
 
 % Links to excel file of hourly irradiation in wh/m2 for regions 1-5 for the entire year
 regiondata = xlsread(solar_filename);
+regionarea = regiondata(1:regions, 6);        % total areas of the regions
 
 % Initialize variables
 PVoutput = zeros(length(t), solar_regions);

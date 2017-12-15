@@ -24,13 +24,8 @@ function [PVoutput, PVarea, PVtotalIrr, PVtotOut] = solarpower(regiondata, t, ..
         % Interpolation for increasing data points(15-min interval)
         % Todo: can use this as a cloud factor / windfactor combination
         if length(Region_irradiation) ~= length(t)
-            Region_irradiation2 = zeros(length(t),1);
-            j = 1;
-            for i = 1:length(Region_irradiation)
-                Region_irradiation2(j:(j+(1/0.25))-1) = Region_irradiation(i);
-                j = j+4;
-            end
-            Region_irradiation = Region_irradiation2;
+            Region_irradiation = hourtoquarter(Region_irradiation, t, 1);
+            Region_irradiation(Region_irradiation < 0) = 0;
         end
         
         clear Region_irradiation2;
@@ -45,12 +40,12 @@ function [PVoutput, PVarea, PVtotalIrr, PVtotOut] = solarpower(regiondata, t, ..
             end
         end
         
-%         %% Plot
-%         legendName = "Region: " + string(region);
-%         plot(t, PVoutput, 'DisplayName', legendName);
-%         legend('-DynamicLegend');
-%         xlabel('Hours in year');
-%         ylabel('Solar pv output in Mwh/hr');
-%         title('PV output hourly, annual');
-%         hold on
-%         grid on
+        %% Plot
+        %         legendName = "Region: " + string(region);
+        %         plot(t, PVoutput, 'DisplayName', legendName);
+        %         legend('-DynamicLegend');
+        %         xlabel('Hours in year');
+        %         ylabel('Solar pv output in Mwh/hr');
+        %         title('PV output hourly, annual');
+        %         hold on
+        %         grid on

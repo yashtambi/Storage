@@ -1,4 +1,4 @@
-function [nPanels, cArea] = SolarCost(region, totPVArea, PVtotOut, filename)
+function [nPanels, cArea] = solarcost(region, totPVArea, PVtotOut, filename)
     %{
         Function to calculate the total number of panels
         required, and return the cost

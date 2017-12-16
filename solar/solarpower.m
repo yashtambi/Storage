@@ -34,7 +34,7 @@ function [PVoutput, PVarea, PVcost, nPanels, PVtotalIrr, PVtotOut] = solarpower(
     PVoutput = Region_irradiation .* efficiency .* PVarea;   % Hourly pv power output in Wh/hour
     
     if nargout > 2
-        [nPanels, PVcost] = solarcost(region, PVarea);
+        [nPanels, PVcost] = SolarCost(region, PVarea);
         if nargout > 4
             PVtotalIrr = trapz(t, Region_irradiation) * tinterval;     % Wh
             if nargout > 5

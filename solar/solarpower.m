@@ -1,4 +1,4 @@
-function [PVoutput, PVarea, PVtotalIrr, PVtotOut] = solarpower(regiondata, t, ...
+function [PVoutput, PVarea, PVcost, nPanels, PVtotalIrr, PVtotOut] = solarpower(regiondata, t, ...
         efficiency, region, areaperplant, totplants)
     %{
         t = hours in the year
@@ -34,9 +34,12 @@ function [PVoutput, PVarea, PVtotalIrr, PVtotOut] = solarpower(regiondata, t, ..
         PVoutput = Region_irradiation .* efficiency .* PVarea;   % Hourly pv power output in Wh/hour
         
         if nargout > 2
-            PVtotalIrr = trapz(t, Region_irradiation) * tinterval;     % Wh
+            [nPanels, PVcost] = solarcost(region, PVarea);
             if nargout > 3
-                PVtotOut = trapz(t, PVoutput) * tinterval;             % Wh
+                PVtotalIrr = trapz(t, Region_irradiation) * tinterval;     % Wh
+                if nargout > 4
+                    PVtotOut = trapz(t, PVoutput) * tinterval;             % Wh
+                end
             end
         end
         

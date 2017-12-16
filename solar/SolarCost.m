@@ -1,10 +1,13 @@
-function [nPanels, cArea] = solarcost(region, totPVArea, PVtotOut, filename)
+function [nPanels, totCost] = solarcost(region, totPVArea)
     %{
         Function to calculate the total number of panels
         required, and return the cost
+        
+        Todo: ask Sukanya for cost and no. of panels formula
     %}
     
-    data = xlsread(filename);
+    
+    data = xlsread('PanelProperties.xlsx');
     
     panelProperties = table;
     panelProperties.efficiency = data(:,1);

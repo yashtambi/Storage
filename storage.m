@@ -81,9 +81,9 @@ subplot(regions, 1, 1);
 for i = 1:regions
     subplot(regions, 1, i);
     try
-        supply = (PVoutput(1:end, i)*100) + (wpower(1:end, i)*500);
+        supply = (PVoutput(1:end, i) * 500000) + (wpower(1:end, i) * 50000);
     catch       % If there are no more wind parks
-        supply = (PVoutput(1:end, i)*100);
+        supply = (PVoutput(1:end, i) * 500000);
     end
     plot(t, supply);
     hold on; grid on;
@@ -93,3 +93,18 @@ for i = 1:regions
     plot_title = "Region " + string(i);
     title (plot_title);
 end
+
+
+%% Energy Deficit
+figure(2)
+demand_deficit = supply - res_demand(1:end, 1);
+plot(t, demand_deficit);
+battery = sfilter(0.7 * (demand_deficit'), t, 7);
+hydro = sfilter(0.25 * (demand_deficit'), t, 24);
+hydrogen = sfilter(0.25 * (demand_deficit'), t, 1);
+plot(t, battery+hydro+hydrogen, t, demand_deficit);
+hold on
+grid on
+% plot(t, demand_deficit' - battery+hydro+hydrogen);
+
+legend 'battery' 'demand_deficit' 'total deficit'

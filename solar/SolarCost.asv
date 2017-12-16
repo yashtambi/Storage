@@ -1,7 +1,9 @@
-function [nPanels, totCost] = SolarCost(PVtotalIrr, PVtotOut)
+function [nPanels, totCost] = SolarCost(region, totPVArea)
 %{
         Function to calculate the total number of panels
         required, and return the cost
+        
+        Todo: ask Sukanya for cost and no. of panels formula
 %}
 
 data = xlsread('PanelProperties.xlsx');
@@ -13,7 +15,7 @@ panelProperties.areaPerPanel = data(:,3);
 panelProperties.cost = data(:,4);
 
 capfactor=(PVtotalIrr*1000)/8760;
-PVcapacity=PVtotOut/(capfactor*8760);
-nPanels = round(PVcapacity./ panelProperties.powerPerPanel);
+PVcapacity=PVtotOut/
+nPanels = round( ./ panelProperties.powerPerPanel);
 totCost = panelProperties.cost .* nPanels;
 end

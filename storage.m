@@ -8,30 +8,30 @@ region_distmat = distRegions(regiondata, regions);
 
 
 %% Solar
-solar_regions = regions;
-default_solarfarm_size = 25;    % km2
-default_solarfarms = 1;         % number of solar farms in region
-default_overall_efficiency = 0.3;
-
-solar_filename = 'avg_irradiations.xlsx';
-
-% Links to excel file of hourly irradiation in wh/m2 for regions 1-5 for the entire year
-solarirradiation = xlsread(solar_filename);
-regionarea = solarirradiation(1:regions, 6);        % total areas of the regions
-
-% Initialize variables
-PVoutput = zeros(length(t), solar_regions);
-PVarea = zeros(1, solar_regions);
-nPanels = zeros(1, solar_regions);
-PVcost = zeros(1, solar_regions);
-
-for i = 1:solar_regions
-    [PVoutput(1:end, i), PVarea(i), PVcost(i), nPanels(i)] = solarpower(solarirradiation, t, ...
-        default_overall_efficiency, i, default_solarfarm_size, default_solarfarms);
-end
-
-clear solar_regions default_solarfarm_size default_solarfarms ...
-    default_overall_efficiency solar_filename regiondata i
+% solar_regions = regions;
+% default_solarfarm_size = 25;    % km2
+% default_solarfarms = 1;         % number of solar farms in region
+% default_overall_efficiency = 0.3;
+% 
+% solar_filename = 'avg_irradiations.xlsx';
+% 
+% % Links to excel file of hourly irradiation in wh/m2 for regions 1-5 for the entire year
+% solarirradiation = xlsread(solar_filename);
+% regionarea = solarirradiation(1:regions, 6);        % total areas of the regions
+% 
+% % Initialize variables
+% PVoutput = zeros(length(t), solar_regions);
+% PVarea = zeros(1, solar_regions);
+% nPanels = zeros(1, solar_regions);
+% PVcost = zeros(1, solar_regions);
+% 
+% for i = 1:solar_regions
+%     [PVoutput(1:end, i), PVarea(i), PVcost(i), nPanels(i)] = solarpower(solarirradiation, t, ...
+%         default_overall_efficiency, i, default_solarfarm_size, default_solarfarms);
+% end
+% 
+% clear solar_regions default_solarfarm_size default_solarfarms ...
+%     default_overall_efficiency solar_filename regiondata i
 
 
 %% Wind
@@ -42,6 +42,8 @@ turbine_filename = 'turbinechars.xlsx';
 windspeeds_filename = 'windspeeds.csv';
 
 turbine = zeros(1, windparks);
+turbinearea = zeros(1, windparks);
+turbinecost = zeros(1, windparks);
 wpower = zeros(length(t), windparks);   % Wind power for all parks
 
 % This loop automatically selects the best wind turbine for each location
@@ -52,7 +54,8 @@ for i = 1:windparks
     wind_r1 = [0 wind_r1']; % inserting a 0 at the start as there are only 8759 elements initially
     % Get the wind speed data for a particular region for 1 turbine (selected
     % automatically from the given list of turbines to get max power output)
-    [wpower(1:end, i), turbine(i)] = turbineselector(turbine_filename, wind_r1, t);
+    [wpower(1:end, i), turbine(i), turbinearea(i), turbinecost(i)] = ...
+        turbineselector(turbine_filename, wind_r1, t);
 end
 
 clear turbine_filename windspeeds_filename i wind_r1

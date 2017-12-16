@@ -3,7 +3,7 @@ clear; clc;
 t = 0.25:0.25:8760;     % time (in steps of 15 mins)
 regions = 5;
 region_filename = 'RegionData.xlsx';
-regiondata = xlsread(region_filename, 'data'); 
+regiondata = xlsread(region_filename, 'data');
 region_distmat = distRegions(regiondata, regions);
 
 
@@ -22,9 +22,11 @@ regionarea = solarirradiation(1:regions, 6);        % total areas of the regions
 % Initialize variables
 PVoutput = zeros(length(t), solar_regions);
 PVarea = zeros(1, solar_regions);
+nPanels = zeros(1, solar_regions);
+PVcost = zeros(1, solar_regions);
 
 for i = 1:solar_regions
-    [PVoutput(1:end, i), PVarea(i)] = solarpower(solarirradiation, t, ...
+    [PVoutput(1:end, i), PVarea(i), PVcost(i), nPanels(i)] = solarpower(solarirradiation, t, ...
         default_overall_efficiency, i, default_solarfarm_size, default_solarfarms);
 end
 

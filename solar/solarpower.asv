@@ -28,6 +28,7 @@ function [PVoutput, PVarea, PVcost, nPanels, PVtotalIrr, PVtotOut] = solarpower(
         Region_irradiation(Region_irradiation < 0) = 0;
     end
     
+    clear Region_irradiation2;
     Region_irradiation = Region_irradiation/10e6;           % Convert to MWh/m2hr
     
     PVoutput = Region_irradiation .* efficiency .* PVarea;   % Hourly pv power output in MWh/hour
@@ -36,16 +37,16 @@ function [PVoutput, PVarea, PVcost, nPanels, PVtotalIrr, PVtotOut] = solarpower(
         PVtotOut = trapz(t, PVoutput) * tinterval;
         PVtotalIrr = trapz(t, Region_irradiation) * tinterval;
         [nPanels, PVcost] = SolarCost(PVtotalIrr, PVtotOut);
-    end
+            end
     
     % Plot
-%     legendName = "Region: " + string(region);
-%     plot(t, PVoutput, 'DisplayName', legendName);
-%     legend('-DynamicLegend');
-%     xlabel('Hours in year');
-%     ylabel('Solar pv output in MWh/h');
-%     title('PV output hourly, annual');
-%     hold on
-%     grid on
+    legendName = "Region: " + string(region);
+    plot(t, PVoutput, 'DisplayName', legendName);
+    legend('-DynamicLegend');
+    xlabel('Hours in year');
+    ylabel('Solar pv output in MWh/h');
+    title('PV output hourly, annual');
+    hold on
+    grid on
     
 end

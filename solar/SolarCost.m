@@ -1,4 +1,6 @@
+
 function [nPanels, totCost] = SolarCost(PVtotalIrr, PVtotOut)
+
 %{
         Function to calculate the total number of panels
         required, and return the cost

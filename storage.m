@@ -42,6 +42,8 @@ turbine_filename = 'turbinechars.xlsx';
 windspeeds_filename = 'windspeeds.csv';
 
 turbine = zeros(1, windparks);
+turbinearea = zeros(1, windparks);
+turbinecost = zeros(1, windparks);
 wpower = zeros(length(t), windparks);   % Wind power for all parks
 
 % This loop automatically selects the best wind turbine for each location
@@ -52,7 +54,8 @@ for i = 1:windparks
     wind_r1 = [0 wind_r1']; % inserting a 0 at the start as there are only 8759 elements initially
     % Get the wind speed data for a particular region for 1 turbine (selected
     % automatically from the given list of turbines to get max power output)
-    [wpower(1:end, i), turbine(i)] = turbineselector(turbine_filename, wind_r1, t);
+    [wpower(1:end, i), turbine(i), turbinearea(i), turbinecost(i)] = ...
+        turbineselector(turbine_filename, wind_r1, t);
 end
 
 clear turbine_filename windspeeds_filename i wind_r1

@@ -8,30 +8,30 @@ region_distmat = distRegions(regiondata, regions);
 
 
 %% Solar
-% solar_regions = regions;
-% default_solarfarm_size = 25;    % km2
-% default_solarfarms = 1;         % number of solar farms in region
-% default_overall_efficiency = 0.3;
-% 
-% solar_filename = 'avg_irradiations.xlsx';
-% 
-% % Links to excel file of hourly irradiation in wh/m2 for regions 1-5 for the entire year
-% solarirradiation = xlsread(solar_filename);
-% regionarea = solarirradiation(1:regions, 6);        % total areas of the regions
-% 
-% % Initialize variables
-% PVoutput = zeros(length(t), solar_regions);
-% PVarea = zeros(1, solar_regions);
-% nPanels = zeros(1, solar_regions);
-% PVcost = zeros(1, solar_regions);
-% 
-% for i = 1:solar_regions
-%     [PVoutput(1:end, i), PVarea(i), PVcost(i), nPanels(i)] = solarpower(solarirradiation, t, ...
-%         default_overall_efficiency, i, default_solarfarm_size, default_solarfarms);
-% end
-% 
-% clear solar_regions default_solarfarm_size default_solarfarms ...
-%     default_overall_efficiency solar_filename regiondata i
+solar_regions = regions;
+default_solarfarm_size = 25;    % km2
+default_solarfarms = 1;         % number of solar farms in region
+default_overall_efficiency = 0.3;
+
+solar_filename = 'avg_irradiations.xlsx';
+
+% Links to excel file of hourly irradiation in wh/m2 for regions 1-5 for the entire year
+solarirradiation = xlsread(solar_filename);
+regionarea = solarirradiation(1:regions, 6);        % total areas of the regions
+
+% Initialize variables
+PVoutput = zeros(length(t), solar_regions);
+PVarea = zeros(1, solar_regions);
+nPanels = zeros(1, solar_regions);
+PVcost = zeros(1, solar_regions);
+
+for i = 1:solar_regions
+    [PVoutput(1:end, i), PVarea(i), PVcost(i), nPanels(i)] = solarpower(solarirradiation, t, ...
+        default_overall_efficiency, i, default_solarfarm_size, default_solarfarms);
+end
+
+clear solar_regions default_solarfarm_size default_solarfarms ...
+    default_overall_efficiency solar_filename regiondata i
 
 
 %% Wind

@@ -146,7 +146,7 @@ function [PDresyR1, PDresR11, PDresR12 ,EDdayWR1, EDdaySR1, EDyearR1] = FUNdeman
     FDresyR1 = FDresyR1 + rdv;
     
     %% Energy use
-    PDresyR1 = ((1+G(r))*R(r))*(1-E(r))*(P(r))*FDresyR1;
+    PDresyR1 = (((1+G(r))*R(r))*(1-E(r))*(P(r))*FDresyR1)/1e3;      % Convert kWh/15min to MWh/15min
     
     if nargout > 1
         PDresR11 = ((1+G(r))*R(r))*(1-E(r))*(P(r))*FDresR11;

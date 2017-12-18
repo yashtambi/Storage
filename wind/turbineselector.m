@@ -46,14 +46,14 @@ function [oppower, turbine, turbinearea, turbinecost, opspeed, maxenergy] = ...
         
         if nargin < 4
             for i = 1:length(totalenergy)
-                totalenergy(i) = turbinechars(tchars, ipspeed, t, i, interval);
+                totalenergy(i) = turbinechars(tchars, ipspeed, t, i);
             end
             turbine = find(totalenergy == max(totalenergy));
         else
             turbine = sturbine;
         end
         
-        [maxenergy, opspeed, oppower] = turbinechars(tchars, ipspeed, t, turbine, interval);
+        [maxenergy, opspeed, oppower] = turbinechars(tchars, ipspeed, t, turbine);
         
         turbinearea = tchars(turbine, 7);
         turbinecost = tchars(turbine, 8);

@@ -6,6 +6,8 @@ region_filename = 'RegionData.xlsx';
 regiondata = xlsread(region_filename, 'data');
 region_distmat = distRegions(regiondata, regions);
 
+clear regiondata
+
 
 %% Solar
 solar_regions = regions;
@@ -81,9 +83,9 @@ subplot(regions, 1, 1);
 for i = 1:regions
     subplot(regions, 1, i);
     try
-        supply = (PVoutput(1:end, i) * 500000) + (wpower(1:end, i) * 50000);
+        supply = (PVoutput(1:end, i) * 250) + (wpower(1:end, i) .* 20000);
     catch       % If there are no more wind parks
-        supply = (PVoutput(1:end, i) * 500000);
+        supply = (PVoutput(1:end, i) * 2000);
     end
     plot(t, supply);
     hold on; grid on;
@@ -94,17 +96,22 @@ for i = 1:regions
     title (plot_title);
 end
 
+clear plot_title i 
+
+
+%% Energy Storage
+storageoptions = xlsread('storage/storageoptions.xlsx');
+
 
 %% Energy Deficit
 figure(2)
-demand_deficit = supply - res_demand(1:end, 1);
-plot(t, demand_deficit);
-battery = sfilter(0.7 * (demand_deficit'), t, 7);
-hydro = sfilter(0.25 * (demand_deficit'), t, 24);
-hydrogen = sfilter(0.25 * (demand_deficit'), t, 1);
-plot(t, battery+hydro+hydrogen, t, demand_deficit);
+demand_deficit = (PVoutput(1:end, 1) * 150) + (wpower(1:end, 1) .* 1000)...
+    - res_demand(1:end, 1);
+distribution = [0.5 0.25 0.25];
+capacity = [4 4 4];
+[estorage, unservedload] = energystorage(demand_deficit', storageoptions, t, capacity, distribution);
+plot(t, estorage, t, demand_deficit);
 hold on
 grid on
-% plot(t, demand_deficit' - battery+hydro+hydrogen);
 
-legend 'battery' 'demand_deficit' 'total deficit'
+legend 'battery' 'demand_deficit'

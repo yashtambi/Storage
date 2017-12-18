@@ -1,4 +1,4 @@
-function oppower = windpower(ipspeed, t, rotordia, ne, interval)
+function oppower = windpower(ipspeed, t, rotordia, ne)
     %{
         This function computes the power output from the turbine using the
         simple formula:
@@ -17,10 +17,10 @@ function oppower = windpower(ipspeed, t, rotordia, ne, interval)
         interval = t(2) - t(1);
     end
     
-    totalseconds = 60*60*interval;
+%     totalseconds = 60*60*interval;
     
     density = 1.3; % Densiy of air in kg per square meter
-    oppower = (0.5 * density * pi * (rotordia/2)^2 .* ipspeed.^3) * ne;
+    oppower = (0.5 * density * pi * (rotordia/2)^2 .* (ipspeed.^3)) * ne;
     
-    oppower = oppower .* totalseconds;
+%     oppower = oppower .* totalseconds;
 end

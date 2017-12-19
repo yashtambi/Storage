@@ -1,4 +1,4 @@
-function [totalenergy, opspeed, oppower] = turbinechars(tchars, ipspeed, t, turbine, interval)
+function [totalenergy, opspeed, oppower] = turbinechars(tchars, ipspeed, t, turbine)
     %{
         This function takes the turbine data (specified below) as input,
         computes the wind speeds as seen by the turbine, calculates the
@@ -35,9 +35,9 @@ function [totalenergy, opspeed, oppower] = turbinechars(tchars, ipspeed, t, turb
     % Other speeds remain as is
     
     % Get the output power for each time
-    oppower = windpower(ipspeed, t, rotordia, efficiency, interval);
+    oppower = windpower(ipspeed, t, rotordia, efficiency);
     
-    oppower = oppower/(3600*10e6);
+    oppower = oppower/(1e6);
     
     % Appy filter to simulate time response of turbine
     oppower = sfilter(oppower, t, tou); 

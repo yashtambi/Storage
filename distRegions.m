@@ -1,12 +1,15 @@
-function [ output_args ] = distRegions(filename, rfrom, rto, isstate)
+function [ distmat ] = distRegions(coordmatrix, regions)
     %UNTITLED3 Summary of this function goes here
     %   Detailed explanation goes here
     
-    if nargin == 4 % isState variable is set
-        if isstate == 1
-            
+    distmat = zeros(size(coordmatrix, 1));
+    % distmat(1,2:end) = cell2mat(regiondata.State(1:end));
+    
+    for i = 1:regions
+        for j = 1:regions
+            distmat(i, j) = distCoordinates(coordmatrix(i, 4), coordmatrix(i, 5), ...
+                coordmatrix(j, 4), coordmatrix(j, 5));
         end
     end
-    
 end
 

@@ -1,7 +1,8 @@
-function [oppower, turbine, opspeed, maxenergy, turbinearea, turbinecost] = turbineselector(filename, ipspeed, t, sturbine)
+function [oppower, turbine, turbinearea, turbinecost, opspeed, maxenergy] = ...
+        turbineselector(filename, ipspeed, t, sturbine)
     %{
         This function selects the best wind turbine out of all available
-        for the given wind speed range and returns the said data. 
+        for the given wind speed range and returns the said data.
             
         This function takes the below described arguments, selects the best
         turbine amongst those available, and returns the data (see below).
@@ -26,39 +27,34 @@ function [oppower, turbine, opspeed, maxenergy, turbinearea, turbinecost] = turb
             <Optional Returns>
             turbinearea: Area for 1 turbine
             turbinecost: Cost for the selected turbine
-    %}
-    
-    defaultinterval = 15/60;        % Default time interval in minutes
-    interval = t(2) - t(1);
-    if interval ~= defaultinterval
-        error('Time not in default interval period')
-    end
-    if length(ipspeed) ~= length(t)
-        ipspeed = hourtoquarter(ipspeed, t); % interpolates hourly data to quarterly data
-        ipspeed = ipspeed';
-    end
-    
-    tchars = xlsread(filename);
-    
-    totalenergy = size(tchars);
-    totalenergy = zeros(1, totalenergy(1));
-    
-    if nargin < 4
-        for i = 1:length(totalenergy)
-            totalenergy(i) = turbinechars(tchars, ipspeed, t, i, interval);
+        %}
+        
+        defaultinterval = 15/60;        % Default time interval in minutes
+        interval = t(2) - t(1);
+        if interval ~= defaultinterval
+            error('Time not in default interval period')
         end
-        turbine = find(totalenergy == max(totalenergy));
-    else
-        turbine = sturbine;
-    end
-    
-    [maxenergy, opspeed, oppower] = turbinechars(tchars, ipspeed, t, turbine, interval);
-    
-    % Return turbine area and cost if asked for
-    if nargout > 4
+        if length(ipspeed) ~= length(t)
+            ipspeed = hourtoquarter(ipspeed, t); % interpolates hourly data to quarterly data
+            ipspeed = ipspeed';
+        end
+        
+        tchars = xlsread(filename);
+        
+        totalenergy = size(tchars);
+        totalenergy = zeros(1, totalenergy(1));
+        
+        if nargin < 4
+            for i = 1:length(totalenergy)
+                totalenergy(i) = turbinechars(tchars, ipspeed, t, i);
+            end
+            turbine = find(totalenergy == max(totalenergy));
+        else
+            turbine = sturbine;
+        end
+        
+        [maxenergy, opspeed, oppower] = turbinechars(tchars, ipspeed, t, turbine);
+        
         turbinearea = tchars(turbine, 7);
-        if nargout > 5
-            turbinecost = tchars(turbine, 8);
-        end
-    end
+        turbinecost = tchars(turbine, 8);
 end

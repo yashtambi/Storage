@@ -1,10 +1,11 @@
-function [nPanels, cArea] = SolarCost(region, totPVArea, PVtotOut, filename)
+function [nPanels, totCost] = SolarCost(PVtotalIrr, PVtotOut)
+    
     %{
         Function to calculate the total number of panels
         required, and return the cost
     %}
     
-    data = xlsread(filename);
+    data = xlsread('PanelProperties.xlsx');
     
     panelProperties = table;
     panelProperties.efficiency = data(:,1);
@@ -12,9 +13,8 @@ function [nPanels, cArea] = SolarCost(region, totPVArea, PVtotOut, filename)
     panelProperties.areaPerPanel = data(:,3);
     panelProperties.cost = data(:,4);
     
-    nPanels = round(totPVArea ./ panelProperties.areaPerPanel);
-    %totPanels_power = round(PVtotOut ./ panelProperties.powerPerPanel);
-    
-    cArea = panelProperties.cost .* nPanels;
-    cPower = nPanels * panelProperties.powerPerPanel;
+    capfactor = (PVtotalIrr * 1000)/8760;
+    PVcapacity = PVtotOut/(capfactor * 8760);
+    nPanels = round(PVcapacity./ panelProperties.powerPerPanel);
+    totCost = panelProperties.cost .* nPanels;
 end

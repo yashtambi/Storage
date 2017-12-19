@@ -1,7 +1,8 @@
 
-filename = 'RegionData.xlsx';
+filename = '/Users/yashtambi/Documents/TUD/Academics/Q2/CH3212_StorageTechnology/Model/RegionData.xlsx';
 
-regiondata = getregiondata();
+sheet = 'data';
+regiondata = getregiondata(filename, sheet);       
 
 distmat = zeros(size(regiondata, 1));
 % distmat(1,2:end) = cell2mat(regiondata.State(1:end));
@@ -12,3 +13,5 @@ for i = 1:length(distmat)
             regiondata.Latitude(j), regiondata.Longitude(j));
     end
 end
+
+clear filename sheet regiondata i j

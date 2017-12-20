@@ -1,5 +1,5 @@
-
-function [f] = optim(feed, estorage, avcapmax, instcap, crate, ceff, deff, interval)
+function [eval, excess] = optim(feed, estorage, avcapmax, ...
+        instcap, crate, ceff, deff, interval, opts)
 sttypes = length(estorage);
 
 % this should be passed as argument to this function
@@ -8,8 +8,8 @@ constraints = (sttypes * 2);
 % Add extra element for the curtailed / unserved load variable
 % The value of this depends on how strongly we want the optimization
 % function to consider/ignore these factors
-ceff = [ceff -1];
-deff = [1./deff 100];
+ceff = [ceff; -1];
+deff = [1./deff; 100];
 
 A = zeros(constraints, sttypes+1);
 b = zeros(1, constraints);
@@ -38,20 +38,14 @@ beq = abs(feed);
 
 lb = zeros(1, sttypes + 1);
 x0 = zeros(1, sttypes + 1);       % Initial values
-fitnessfunc = @(x)objfunc(x, feed, eff);
+fcn = @(x)objfunc(x, feed, eff);
 
-[X,FVAL,EXITFLAG,OUTPUT] = patternsearch(fitnessfunc, x0, A, b, Aeq, beq, lb, [], []);
+eval = fmincon(fcn, x0, A, b, Aeq, beq, lb, [], [], opts);
 
-%{
-    Todo: 
-        1. Changing the output (values of dist) for actual energy withdrawn
-        / deposited in the storage, since this function only gives the
-        distribution of feed
-        2. FVAL to show the curtailed / unserved load
-        3. Multiplying results of (1) by interval to get the total energy
-        withdrawn / deposited for the duration
-%}
-
+excess = eval(end);
+% Actual energy withdrawn (-ve) / deposited (+ve) in the storage types
+eval = sign(feed) .* eval(1:end-1) .* eff(1:end-1)' .* interval; 
+eval(abs(eval)<1e-4) = 0;
 end
 
 % call optimization function

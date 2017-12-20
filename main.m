@@ -89,7 +89,14 @@ clear plot_title i
 
 
 %% Energy Storage
-storageoptions = xlsread('storage/storageoptions.xlsx');
+storageoptions = xlsread('storageoptions2.xlsx');
+instcap = [4; 6; 2];
+ceff = storageoptions(:, 2);
+deff = storageoptions(:, 3);
+crate = storageoptions(:, 4);
+instcap = instcap .* 1e6; 
+avcapmax = instcap .* storageoptions(:, 5);
+interval = t(2) - t(1);
 
 
 %% Energy Deficit
@@ -98,17 +105,20 @@ nsolarfarms= [1500, 10000, 5000, 5000, 2500];
 nwindparks= [1000, 2000, 1000, 10000, 7000];
 
 distribution = [0.5; 0.25; 0.25];% .* ones(min(size(storageoptions)), regions);
-capacity = [4; 6; 2];% .* ones(min(size(storageoptions)), regions);
 
 % Calculate demand deficit for each region
 demand_deficit = (pvpower .* nsolarfarms) + (wpower .* nwindparks) - res_demand;
 
-estorage = zeros(size(demand_deficit));
+% estorage = zeros(size(demand_deficit));
 
-for i = 1:regions
-    [estorage(:, i)] = ...
-        energystorage(demand_deficit(:, i), storageoptions, t, capacity, distribution);
-end
+% for i = 1:regions
+%     [estorage(:, i)] = ...
+%         energystorage(demand_deficit(:, i), storageoptions, t, capacity, distribution);
+% end
+
+estorage = storageselect2(demand_deficit(:, 1), instcap, avcapmax, ceff, deff, crate, interval);
+
+% storageselect2(feed, instcap, avcapmax, ceff, deff, crate, interval);
 
 plot(t, demand_deficit(:, 3), t, estorage(:, 3))
 

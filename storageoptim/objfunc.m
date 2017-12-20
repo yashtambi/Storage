@@ -8,6 +8,6 @@ function [ f ] = objfunc(dist, feed, eff)
     % feed: energy deficit at the point
     % eff: efficiency for each storage type (charge / discharge)
     
-    f = -1 * sign(feed) * sum(eff .* dist);
+    f = -1 * sign(feed) * sum(eff' .* dist);
 end
 

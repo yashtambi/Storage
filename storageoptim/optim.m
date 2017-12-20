@@ -1,65 +1,57 @@
 
-clear; clc;
+function [f] = optim(feed, estorage, avcapmax, instcap, crate, ceff, deff, interval)
+sttypes = length(estorage);
 
-feed = 12;
-
-% The dimentions of the below 5 should be the same
-ceff = [0.9, 0.8, 0.8];     % Charge efficiency
-deff = [0.9, 0.65, 0.95];   % Discharge efficiency
-estorage = [3, 4, 4];       % Current energy content
-avcapmax = [3, 4, 50];      % Max available
-instcap = [4, 5, 100];      % Installed capacity
-crate = [0.9, 0.8, 0.01];   % Crate max
+% this should be passed as argument to this function
+constraints = (sttypes * 2);
 
 % Add extra element for the curtailed / unserved load variable
 % The value of this depends on how strongly we want the optimization
 % function to consider/ignore these factors
 ceff = [ceff -1];
-deff = [1./deff 0.01];
+deff = [1./deff 100];
 
-% this should be passed as argument to this function
-constraints = (length(estorage)*2);
-
-A = zeros(constraints, 4);
+A = zeros(constraints, sttypes+1);
 b = zeros(1, constraints);
 
 if feed > 0
-    for i = 1:3
-        A(i, i) = ceff(i);
+    eff = ceff;
+    for i = 1:sttypes
+        A(i, i) = eff(i);
         b(i) = avcapmax(i) - estorage(i);
     end
-    for j = i+1:6
-        A(j, j-i) = ceff(j-i);
-        b(j) = crate(j-i) * instcap(j-i);
-    end
-    A(constraints, :) = [1, 1, 1, 1]; b(constraints) = feed;
-    %     lb = [0, 0, 0, 0];
-    %     fitnessfunc = @(x)objfunc(x, feed, ceff, deff);
-    %
-    %     x0 = zeros(1, 4);
-    %     [X,FVAL,EXITFLAG,OUTPUT] = patternsearch(fitnessfunc,x0,A,b,[],[],lb,[],[]);
-    %
-%     Aeq = [];
-%     beq = [];
-    
-    %     curtailed = feed + FVAL;
-else % feed <= 0
-    for i = 1:3
-        A(i, i) = deff(i);
+else
+    eff = deff;
+    for i = 1:sttypes
+        A(i, i) = eff(i);
         b(i) = estorage(i);
     end
-    for j = i+1:6
-        A(j, j-i) = deff(j-i);
-        b(j) = crate(j-i) * instcap(j-i);
-    end
+end
+
+for i = sttypes+1: sttypes*2
+    A(i, i-sttypes) = eff(i-sttypes);
+    b(i) = crate(i-sttypes) * instcap(i-sttypes);
 end
 
 Aeq(1, :) = [1, 1, 1, 1];
 beq = abs(feed);
 
-lb = [0, 0, 0, 0];
-x0 = zeros(1, 4);       % Initial values
-fitnessfunc = @(x)objfunc(x, feed, ceff, deff);
-[X,FVAL,EXITFLAG,OUTPUT] = patternsearch(fitnessfunc,x0,A,b,Aeq,beq,lb,[],[]);
+lb = zeros(1, sttypes + 1);
+x0 = zeros(1, sttypes + 1);       % Initial values
+fitnessfunc = @(x)objfunc(x, feed, eff);
+
+[X,FVAL,EXITFLAG,OUTPUT] = patternsearch(fitnessfunc, x0, A, b, Aeq, beq, lb, [], []);
+
+%{
+    Todo: 
+        1. Changing the output (values of dist) for actual energy withdrawn
+        / deposited in the storage, since this function only gives the
+        distribution of feed
+        2. FVAL to show the curtailed / unserved load
+        3. Multiplying results of (1) by interval to get the total energy
+        withdrawn / deposited for the duration
+%}
+
+end
 
 % call optimization function

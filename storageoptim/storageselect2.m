@@ -14,7 +14,7 @@ function [ estorage, droppedload ] = storageselect2( feed, instcap, ...
         estorage(i+1, :) = estorage(i + 1, :) + estorage(i, :);
     end
     
-    estorage = estorage(2 : end);
+    estorage = estorage(2:end, :);
     droppedload = trapz(excess(excess < 0)) * interval;
 end
 

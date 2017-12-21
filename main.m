@@ -17,13 +17,13 @@ default_overall_efficiency = 0.03;
 solarirradiation = simportfile('avg_irradiations.xlsx');
 
 % Initialize variables
-pvpower = zeros(length(t), solar_regions);
+pvpower = zeros(solar_regions, length(t));
 pvarea = zeros(1, solar_regions);
 npanels = zeros(1, solar_regions);
 pvcost = zeros(1, solar_regions);
 
 for i = 1:solar_regions
-    [pvpower(1:end, i), pvarea(i), pvcost(i), npanels(i)] = solarpower(solarirradiation, t, ...
+    [pvpower(i, 1:end), pvarea(i), pvcost(i), npanels(i)] = solarpower(solarirradiation, t, ...
         default_overall_efficiency, i, default_solarfarm_size, default_solarfarms);
 end
 
@@ -40,12 +40,12 @@ turbine_filename = 'turbinechars.xlsx';
 turbine = zeros(1, windparks);
 turbinearea = zeros(1, windparks);
 turbinecost = zeros(1, windparks);
-wpower = zeros(length(t), windparks);   % Wind power for all parks
+wpower = zeros(windparks, length(t));   % Wind power for all parks
 
 % This loop automatically selects the best wind turbine for each location
 % depending on windspeeds and turbine characteristics
 for i = 1:windparks
-    [wpower(1:end, i), turbine(i), turbinearea(i), turbinecost(i)] = ...
+    [wpower(i, 1:end), turbine(i), turbinearea(i), turbinecost(i)] = ...
         turbineselector(turbine_filename, windspeeds, t);
 end
 
@@ -56,10 +56,10 @@ clear turbine_filename i wind_r1 windspeeds
 residential_filename = 'residential_demand.xlsx';
 demand_regions = regions;
 
-res_demand = zeros(length(t), demand_regions);
+res_demand = zeros(demand_regions, length(t));
 
 for i = 1:demand_regions
-    res_demand(1:end, i) = residentialdemand(i);
+    res_demand(i, 1:end) = residentialdemand(i);
 end
 
 clear i demand_regions residential_filename
@@ -101,28 +101,10 @@ interval = t(2) - t(1);
 
 %% Energy Deficit
 % figure(2)
-nsolarfarms= [1500, 10000, 5000, 5000, 2500];
-nwindparks= [1000, 2000, 1000, 10000, 7000];
-
-distribution = [0.5; 0.25; 0.25];% .* ones(min(size(storageoptions)), regions);
+nsolarfarms= [1500; 10000; 5000; 5000; 2500];
+nwindparks= [1000; 2000; 1000; 10000; 7000];
 
 % Calculate demand deficit for each region
 demand_deficit = (pvpower .* nsolarfarms) + (wpower .* nwindparks) - res_demand;
 
-% estorage = zeros(size(demand_deficit));
-
-% for i = 1:regions
-%     [estorage(:, i)] = ...
-%         energystorage(demand_deficit(:, i), storageoptions, t, capacity, distribution);
-% end
-
-estorage = storageselect2(demand_deficit(:, 1), instcap, avcapmax, ceff, deff, crate, interval);
-
-% storageselect2(feed, instcap, avcapmax, ceff, deff, crate, interval);
-
-plot(t, demand_deficit(:, 3), t, estorage(:, 3))
-
-hold on
-grid on
-
-legend 'Demand Deficit' 'Storage' 
+estorage = storageselect2(demand_deficit(1, :), instcap, avcapmax, ceff, deff, crate, interval);

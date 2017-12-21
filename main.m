@@ -65,32 +65,9 @@ end
 clear i demand_regions residential_filename
 
 
-%% Plotting
-%{
-figure
-for i = 1:regions
-    try
-        supply = (pvpower(1:end, i) * 250) + (wpower(1:end, i) .* 20000);
-    catch
-        supply = (pvpower(1:end, i) * 200);
-    end
-        subplot(regions, 1, i);
-        plot(t, supply);
-        hold on; grid on;
-        plot (t, res_demand(1:end, i));
-        plot(t, supply - res_demand(1:end, i));
-        legend 'Supply' 'Demand' 'Deficit';
-        plot_title = "Region " + string(i);
-        title (plot_title);
-end
-
-clear plot_title i
-%}
-
-
 %% Energy Storage
 storageoptions = xlsread('storageoptions2.xlsx');
-instcap = [4; 6; 2];
+instcap = [4; 6; 200];
 ceff = storageoptions(:, 2);
 deff = storageoptions(:, 3);
 crate = storageoptions(:, 4);
@@ -108,3 +85,5 @@ nwindparks= [1000; 2000; 1000; 10000; 7000];
 demand_deficit = (pvpower .* nsolarfarms) + (wpower .* nwindparks) - res_demand;
 
 estorage = storageselect2(demand_deficit(1, :), instcap, avcapmax, ceff, deff, crate, interval);
+
+fprintf('Optimization complete\n');

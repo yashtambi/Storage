@@ -30,8 +30,8 @@ function [PVoutput, PVarea, PVcost, nPanels, PVtotalIrr, PVtotOut] = solarpower(
     
     Region_irradiation = Region_irradiation/10e6;           % Convert to MWh/m2hr
     
-    PVoutput = Region_irradiation .* efficiency .* PVarea;   % Hourly pv power output in MWh/hour
-    
+    %PVoutput = Region_irradiation .* efficiency .* PVarea;   % Hourly pv power output in MWh/hour
+    PVoutput = Region_irradiation .* efficiency ;  %interested in PVoutput per m2
     if nargout > 2
         PVtotOut = trapz(t, PVoutput) * tinterval;
         PVtotalIrr = trapz(t, Region_irradiation) * tinterval;

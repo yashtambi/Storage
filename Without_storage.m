@@ -1,7 +1,7 @@
-function(x)=withoutstorage(PVoutput,wpower,hydropower,region, demand)
+function[x,fval]=Without_storage(PVoutput,wpower,hydropower,region, demand)
 data=xlsread('cost analysis.xlsx');
 cost=data(1:3,7);%LCOEs
-maxareas=data(1:5,9);%Areas of each region
+maxarea=data(1:5,9);%Areas of each region
 %%shows how much of the land can be apportioned depending on resource availability in the region
 PVland=data(1:5,3);
 Windland=data(1:5,4);
@@ -27,12 +27,12 @@ lb=[PVmin, Windmin, Hydromin];
 %%Demand supply constraint
 demandfactor=data(1:5,2);
 Aeq=[1 1 1];
-Beq=[demandfactor(region)*demand];
+beq=demandfactor(region)*demand;
 
 %%
 A=[];
-B=[];
+b=[];
 
-[x,fval,exitflag,output,lambda] = linprog(f,A,b,Aeq,beq,lb,ub);
+[x,fval] = linprog(f,A,b,Aeq,beq,lb,ub);
 
 

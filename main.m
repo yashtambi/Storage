@@ -53,6 +53,31 @@ clear turbine_filename i wind_r1 windspeeds
 
 
 %% Demand
+
+%level playing field
+lpf  = 0.00004;
+
+%Average demand resonse
+dr = 0.3;
+
+tpd = 96;
+td = 365;
+tpy = td*tpd;
+tdy = 1:1:td;
+tsy = 1:1:tpy;
+
+%% level playing field
+PVoutput  = PVoutput.*lpf*0.001;
+PVoutputM = PVoutputM.*lpf*0.001;
+
+%% Residential Demand response
+Psupply = PVoutput;
+Pdemand = PDRy;
+
+[PDRyresponse,PDRyMresponse,EDRyresponse] = FUNdemandRESPONSE(Psupply,Pdemand,dr);
+
+
+
 residential_filename = 'residential_demand.xlsx';
 demand_regions = regions;
 

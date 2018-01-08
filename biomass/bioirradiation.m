@@ -13,6 +13,10 @@ function [total] = bioirradiation(region, regiondata, t, starthour, endhour)
     
     Region_irradiation(t<starthour) = 0; %correction for zero production before planting species
     total=cumtrapz(Region_irradiation*(1/3.6)*10^-9*15*60); %accumulated solar energy throughout the year in MWh
-    endval = total(endhour/0.25); %correction for stagnated production after harvesting
+    try
+        endval = total(endhour/0.25); %correction for stagnated production after harvesting
+    catch
+        endval = total((endhour/0.25)+1); %correction for stagnated production after harvesting
+    end
     total(t>endhour) = endval;
 end

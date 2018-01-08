@@ -55,19 +55,36 @@ clear turbine_filename i wind_r1 windspeeds
 %% Demand
 residential_filename = 'residential_demand.xlsx';
 demand_regions = regions;
+transport=xlsread('transport.xlsx');
+transport_demand=zeros(length(t),regions);
 
-res_demand = zeros(demand_regions, length(t));
+tlosses = [1.05, 0.85, 1.45, 0.85, 1.05];
 
+res_demand = zeros(length(t), demand_regions);
+industry_demand=zeros(demand_regions,1);
+demandtime=zeros(1,demand_regions);
 for i = 1:demand_regions
-    res_demand(i, 1:end) = residentialdemand(i);
+    res_demand(1:end, i) = residentialdemand(i);
+    %transport_demand(:,i)=transport(:,i);
+    industry_demand(i)=transport((i+1),8);
+    
 end
+totaldemand=zeros(length(t), demand_regions);
+for i=1:demand_regions
+    for j=1:length(t)
+        totaldemand(j,i)=res_demand(j,i)+transport(j,i)+industry_demand(i);
+    end
+    totaldemand(:,i) = totaldemand(:,i) .* tlosses(i);
+end
+totaldemand(isnan(totaldemand)) = 0;
+totaldemand = sum(totaldemand, 2);
 
 clear i demand_regions residential_filename
 
 
 %% Energy Storage
 storageoptions = xlsread('storageoptions2.xlsx');
-instcap = [4; 6; 200];
+instcap = [40; 60; 2000];
 ceff = storageoptions(:, 2);
 deff = storageoptions(:, 3);
 crate = storageoptions(:, 4);
@@ -78,13 +95,18 @@ interval = t(2) - t(1);
 
 %% Energy Deficit
 % figure(2)
-nsolarfarms= [1500; 10000; 5000; 5000; 2500];
-nwindparks= [1000; 2000; 1000; 10000; 7000];
+nsolarfarms= [150000; 1000000; 500000; 250000; 500000];
+nwindparks= [100000; 200000; 100000; 1000000; 700000];
 
 % Calculate demand deficit for each region
-demand_deficit = (pvpower .* nsolarfarms) + (wpower .* nwindparks) - res_demand;
+% demand_deficit = (pvpower .* nsolarfarms) + (wpower .* nwindparks) - res_demand;
 
-estorage = storageselect2(demand_deficit(1, :), instcap, avcapmax, ceff, ...
+totalsupply = sum((pvpower .* nsolarfarms) + (wpower .* nwindparks), 1);
+demand_deficit = totalsupply - totaldemand';
+
+estorage = storageselect2(demand_deficit, instcap, avcapmax, ceff, ...
     deff, crate, interval, storageoptions);
 
 fprintf('Optimization complete\n');
+
+resultplot.m

@@ -13,7 +13,7 @@ function [ opdata ] = hourtoquarter( ipdata, t, noiseamp )
         opdata = zeros(length(t),1);
         j = 1;
         for i = 1:length(ipdata)
-            opdata(j:(j+(1/0.25))-1) = ipdata(i) + (coeff*wgn(1,(1/0.25), noiseamp));
+            opdata(j:(j+(1/0.25))-1) = ipdata(i);% + (coeff*wgn(1,(1/0.25), noiseamp));
             j = j+4;
         end
     end

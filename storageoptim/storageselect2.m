@@ -1,5 +1,5 @@
-function [ estorage, droppedload ] = storageselect2( feed, instcap, ...
-        avcapmax, ceff, deff, crate, interval )
+function [ estorage, droppedload, storagecost ] = storageselect2( feed, instcap, ...
+        avcapmax, ceff, deff, crate, interval, storageoptions )
     %STORAGEOPTIONS2 Summary of this function goes here
     %   Detailed explanation goes here
     
@@ -16,5 +16,9 @@ function [ estorage, droppedload ] = storageselect2( feed, instcap, ...
     
     estorage = estorage(:, 2:end);
     droppedload = trapz(excess(excess < 0)) * interval;
+    
+    if nargout > 2      % Total cost of installed capacity
+        storagecost = sum(capacity .* storageoptions(:,1));
+    end
 end
 

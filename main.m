@@ -84,6 +84,7 @@ nwindparks= [1000; 2000; 1000; 10000; 7000];
 % Calculate demand deficit for each region
 demand_deficit = (pvpower .* nsolarfarms) + (wpower .* nwindparks) - res_demand;
 
-estorage = storageselect2(demand_deficit(1, :), instcap, avcapmax, ceff, deff, crate, interval);
+estorage = storageselect2(demand_deficit(1, :), instcap, avcapmax, ceff, ...
+    deff, crate, interval, storageoptions);
 
 fprintf('Optimization complete\n');
